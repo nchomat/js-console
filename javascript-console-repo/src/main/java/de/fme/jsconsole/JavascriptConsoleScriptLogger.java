@@ -18,10 +18,8 @@
 
 package de.fme.jsconsole;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.extensions.webscripts.annotation.ScriptClass;
 import org.springframework.extensions.webscripts.annotation.ScriptClassType;
 import org.springframework.extensions.webscripts.annotation.ScriptMethod;
@@ -50,7 +48,7 @@ import org.springframework.extensions.webscripts.annotation.ScriptParameter;
 public final class JavascriptConsoleScriptLogger
 {
     // NOTE: keep compatibility with repository script logger
-    private static final Log logger = LogFactory.getLog("org.alfresco.repo.jscript.ScriptLogger");
+    private static final Logger logger = LoggerFactory.getLogger("org.alfresco.repo.jscript.ScriptLogger");
     private final SystemOut systemOut = new SystemOut();
 	private final JavascriptConsoleScriptObject jsConsole;
     
@@ -178,9 +176,9 @@ public final class JavascriptConsoleScriptLogger
     }
     
     public void setLevel(String classname, String level) {
-    	Logger log4j = Logger.getLogger(classname);
-    	Level logLevel = Level.toLevel(level);
-    	log4j.setLevel(logLevel);
+    	// Note: SLF4J doesn't support runtime log level changes directly.
+    	// Configure logging levels in logback.xml configuration instead.
+    	logger.warn("Dynamic log level changes are not supported via SLF4J. Configure logging in logback.xml");
     }
 	  	  
 }
