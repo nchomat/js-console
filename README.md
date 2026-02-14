@@ -111,6 +111,25 @@ project directory:
 
     mvn install
 
+  Running run.sh on Debian without Docker
+  --------------------------------------
+
+  The module scripts [javascript-console-repo/run.sh](javascript-console-repo/run.sh) and
+  [javascript-console-share/run.sh](javascript-console-share/run.sh) support environments where
+  Docker is not available.
+
+  - If Docker is available, the script runs integration tests (and `amp-to-war` profile when present).
+  - If Docker is not available, the script automatically falls back to:
+
+    mvn package -DskipTests
+
+  - Spring Loaded (`-javaagent`) is only used on legacy JDK versions; on modern JDKs the script runs without it.
+
+  Example on Debian:
+
+    cd javascript-console-repo
+    bash run.sh
+
 The command builds two JAR files named `javascript-console-repo-<version>.jar` /
 `javascript-console-share-<version>.jar` and `javascript-console-repo-<version>-sources.jar` /
 `javascript-console-share-<version>-sources.jar` as well as `javascript-console-repo-<version>.amp` /
