@@ -21,15 +21,15 @@ if command -v docker >/dev/null 2>&1 && [ -f "$ROOT_DIR/docker-compose.yml" ]; t
   echo ""
   echo "==> Lancement de l'environnement Docker Alfresco..."
   cd "$ROOT_DIR"
-  docker-compose up -d
+  docker compose up -d
   
   echo ""
   echo "Alfresco disponible sur:"
   echo "  - Repository: http://localhost:8080/alfresco"
   echo "  - Share: http://localhost:8180/share"
   echo ""
-  echo "Pour arrêter: docker-compose down"
-  echo "Pour voir les logs: docker-compose logs -f"
+  echo "Pour arrêter: docker compose down"
+  echo "Pour voir les logs: docker compose logs -f"
 else
   echo ""
   echo "Docker non disponible ou docker-compose.yml manquant."
