@@ -23,4 +23,5 @@ services:
 
 networks:
   alfresco-network:
+    name: alfresco-network
     external: true

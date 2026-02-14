@@ -76,4 +76,5 @@ volumes:
 
 networks:
   alfresco-network:
+    name: alfresco-network
     driver: bridge
