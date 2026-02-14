@@ -17,7 +17,7 @@ fi
 
 echo "==> Build successful: $(ls -lh target/*.jar | tail -1 | awk '{print $9}')"
 
-if command -v docker >/dev/null 2>&1 && [ -f "$ROOT_DIR/docker-compose.yml" ]; then
+if command -v docker >/dev/null 2>&1 && [ -f "$ROOT_DIR/docker-compose-share.yml" ]; then
   echo ""
   echo "==> Lancement de l'environnement Docker Alfresco..."
   cd "$ROOT_DIR"
@@ -32,6 +32,6 @@ if command -v docker >/dev/null 2>&1 && [ -f "$ROOT_DIR/docker-compose.yml" ]; t
   echo "Pour voir les logs: docker compose -f docker-compose-share.yml logs -f"
 else
   echo ""
-  echo "Docker non disponible ou docker-compose.yml manquant."
+  echo "Docker non disponible ou docker-compose-share.yml manquant."
   echo "Les JARs sont disponibles dans target/ pour déploiement manuel."
 fi
