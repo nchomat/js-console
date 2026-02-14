@@ -1,35 +1,37 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Runs integration tests for the module.
-# Spring Loaded is only used on legacy JDKs where it is still viable.
+# Builds the module and starts Docker environment if available.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+echo "==> Building javascript-console-repo..."
 cd "$SCRIPT_DIR"
+mvn clean install -DskipTests
 
-springloadedfile="${HOME}/.m2/repository/org/springframework/springloaded/1.2.3.RELEASE/springloaded-1.2.3.RELEASE.jar"
-
-java_version_string="$(java -version 2>&1 | awk -F '"' '/version/ {print $2; exit}')"
-java_major="$(echo "$java_version_string" | awk -F. '{if ($1=="1") print $2; else print $1}')"
-
-maven_cmd=(mvn integration-test)
-
-if ! command -v docker >/dev/null 2>&1; then
-	echo "Docker non détecté: exécution du build Maven sans tests d'intégration."
-	maven_cmd=(mvn package -DskipTests)
-elif mvn -q help:all-profiles | grep -q "amp-to-war"; then
-	maven_cmd+=("-Pamp-to-war")
+if [ $? -ne 0 ]; then
+  echo "Build failed!"
+  exit 1
 fi
 
-if [[ "$java_major" =~ ^[0-9]+$ ]] && [ "$java_major" -lt 13 ]; then
-	if [ ! -f "$springloadedfile" ]; then
-		mvn -q dependency:get -Dartifact=org.springframework:springloaded:1.2.3.RELEASE
-	fi
+echo "==> Build successful: $(ls -lh target/*.jar | tail -1 | awk '{print $9}')"
 
-	if [ -f "$springloadedfile" ]; then
-		MAVEN_OPTS="-javaagent:$springloadedfile -noverify -Xms256m -Xmx2G" "${maven_cmd[@]}"
-		exit $?
-	fi
+if command -v docker >/dev/null 2>&1 && [ -f "$ROOT_DIR/docker-compose.yml" ]; then
+  echo ""
+  echo "==> Lancement de l'environnement Docker Alfresco..."
+  cd "$ROOT_DIR"
+  docker-compose up -d
+  
+  echo ""
+  echo "Alfresco disponible sur:"
+  echo "  - Repository: http://localhost:8080/alfresco"
+  echo "  - Share: http://localhost:8180/share"
+  echo ""
+  echo "Pour arrêter: docker-compose down"
+  echo "Pour voir les logs: docker-compose logs -f"
+else
+  echo ""
+  echo "Docker non disponible ou docker-compose.yml manquant."
+  echo "Les JARs sont disponibles dans target/ pour déploiement manuel."
 fi
-
-MAVEN_OPTS="-Xms256m -Xmx2G" "${maven_cmd[@]}"

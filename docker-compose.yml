@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  alfresco:
+    image: alfresco/alfresco-content-repository-community:25.2.0
+    environment:
+      JAVA_OPTS: >-
+        -Xms512m -Xmx2g
+        -Dalfresco.host=localhost
+        -Dalfresco.port=8080
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./javascript-console-repo/target/javascript-console-repo-0.7-SNAPSHOT.jar:/usr/local/tomcat/webapps/alfresco/WEB-INF/lib/javascript-console-repo-0.7-SNAPSHOT.jar
+
+  share:
+    image: alfresco/alfresco-share:25.2.0.46
+    environment:
+      REPO_HOST: alfresco
+      REPO_PORT: 8080
+    ports:
+      - "8180:8080"
+    depends_on:
+      - alfresco
+    volumes:
+      - ./javascript-console-share/target/javascript-console-share-0.7-SNAPSHOT.jar:/usr/local/tomcat/webapps/share/WEB-INF/lib/javascript-console-share-0.7-SNAPSHOT.jar
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: alfresco
+      POSTGRES_USER: alfresco
+      POSTGRES_PASSWORD: alfresco
+    ports:
+      - "5432:5432"

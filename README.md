@@ -111,24 +111,31 @@ project directory:
 
     mvn install
 
-  Running run.sh on Debian without Docker
-  --------------------------------------
+Running with Docker
+-------------------
 
-  The module scripts [javascript-console-repo/run.sh](javascript-console-repo/run.sh) and
-  [javascript-console-share/run.sh](javascript-console-share/run.sh) support environments where
-  Docker is not available.
+The module scripts [javascript-console-repo/run.sh](javascript-console-repo/run.sh) and
+[javascript-console-share/run.sh](javascript-console-share/run.sh) build the module and
+optionally start a Docker environment if available.
 
-  - If Docker is available, the script runs integration tests (and `amp-to-war` profile when present).
-  - If Docker is not available, the script automatically falls back to:
+**Behavior:**
+- Builds the module with `mvn clean install -DskipTests`
+- If Docker and [docker-compose.yml](docker-compose.yml) are present, launches Alfresco containers
+- If Docker is unavailable, the JARs remain in `target/` for manual deployment
 
-    mvn package -DskipTests
-
-  - Spring Loaded (`-javaagent`) is only used on legacy JDK versions; on modern JDKs the script runs without it.
-
-  Example on Debian:
+**Usage on Debian:**
 
     cd javascript-console-repo
     bash run.sh
+
+**Access the environment:**
+- Repository: http://localhost:8080/alfresco (admin/admin)
+- Share: http://localhost:8180/share (admin/admin)
+
+**Docker commands:**
+- Stop: `docker-compose down`
+- Logs: `docker-compose logs -f`
+- Restart: `docker-compose restart`
 
 The command builds two JAR files named `javascript-console-repo-<version>.jar` /
 `javascript-console-share-<version>.jar` and `javascript-console-repo-<version>-sources.jar` /
