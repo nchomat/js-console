@@ -114,28 +114,49 @@ project directory:
 Running with Docker
 -------------------
 
-The module scripts [javascript-console-repo/run.sh](javascript-console-repo/run.sh) and
-[javascript-console-share/run.sh](javascript-console-share/run.sh) build the module and
-optionally start a Docker environment if available.
+Le projet utilise deux fichiers docker-compose séparés pour plus de flexibilité :
+- **docker-compose-alfresco.yml** : PostgreSQL + Alfresco Repository
+- **docker-compose-share.yml** : Alfresco Share (se connecte au repository)
 
-**Behavior:**
-- Builds the module with `mvn clean install -DskipTests`
-- If Docker and [docker-compose.yml](docker-compose.yml) are present, launches Alfresco containers
-- If Docker is unavailable, the JARs remain in `target/` for manual deployment
+Les scripts [javascript-console-repo/run.sh](javascript-console-repo/run.sh) et
+[javascript-console-share/run.sh](javascript-console-share/run.sh) buildent automatiquement
+et lancent les conteneurs correspondants.
 
-**Usage on Debian:**
+**Démarrage sur Debian:**
 
-    cd javascript-console-repo
-    bash run.sh
+1. **Lancer le repository (obligatoire en premier):**
+   ```bash
+   cd javascript-console-repo
+   bash run.sh
+   ```
+   Cela démarre PostgreSQL + Alfresco Repository et crée le réseau `alfresco-network`.
 
-**Access the environment:**
+2. **Lancer Share (optionnel):**
+   ```bash
+   cd javascript-console-share
+   bash run.sh
+   ```
+   Share se connecte au repository via le réseau Docker partagé.
+
+**Accès:**
 - Repository: http://localhost:8080/alfresco (admin/admin)
 - Share: http://localhost:8180/share (admin/admin)
 
-**Docker commands:**
-- Stop: `docker-compose down`
-- Logs: `docker-compose logs -f`
-- Restart: `docker-compose restart`
+**Commandes Docker utiles:**
+```bash
+# Arrêter le repo
+docker compose -f docker-compose-alfresco.yml down
+
+# Arrêter share
+docker compose -f docker-compose-share.yml down
+
+# Supprimer les volumes (réinitialisation complète)
+docker compose -f docker-compose-alfresco.yml down -v
+
+# Voir les logs
+docker compose -f docker-compose-alfresco.yml logs -f alfresco
+docker compose -f docker-compose-share.yml logs -f share
+```
 
 The command builds two JAR files named `javascript-console-repo-<version>.jar` /
 `javascript-console-share-<version>.jar` and `javascript-console-repo-<version>-sources.jar` /

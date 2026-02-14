@@ -19,17 +19,16 @@ echo "==> Build successful: $(ls -lh target/*.jar | tail -1 | awk '{print $9}')"
 
 if command -v docker >/dev/null 2>&1 && [ -f "$ROOT_DIR/docker-compose-alfresco.yml" ]; then
   echo ""
-  echo "==> Lancement de l'environnement Docker Alfresco..."
+  echo "==> Lancement de l'environnement Docker Alfresco (PostgreSQL + Repository)..."
   cd "$ROOT_DIR"
   docker compose -f docker-compose-alfresco.yml up -d 
   
   echo ""
-  echo "Alfresco disponible sur:"
-  echo "  - Repository: http://localhost:8080/alfresco"
-  echo "  - Share: http://localhost:8180/share"
+  echo "Alfresco Repository disponible sur: http://localhost:8080/alfresco"
+  echo "Identifiants: admin / admin"
   echo ""
   echo "Pour arrêter: docker compose -f docker-compose-alfresco.yml down"
-  echo "Pour voir les logs: docker compose -f docker-compose-alfresco.yml logs -f"
+  echo "Pour voir les logs: docker compose -f docker-compose-alfresco.yml logs -f alfresco"
 else
   echo ""
   echo "Docker non disponible ou docker-compose-alfresco.yml manquant."
